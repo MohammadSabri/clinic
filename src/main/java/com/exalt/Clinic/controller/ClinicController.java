@@ -17,13 +17,13 @@ import com.exalt.Clinic.model.Clinic;
 import com.exalt.Clinic.service.ClinicService;
 
 @RestController
-@RequestMapping("/v1/api/clinic")
+@RequestMapping("/api/v1/clinic")
 
 public class ClinicController {
 	@Autowired
 	ClinicService clinicService;
 
-	@PostMapping(path = "/")
+	@PostMapping(path = {"/",""})
 	public Clinic creatClinic(@RequestBody Clinic clinic) {
 		return clinicService.create(clinic);
 	}
@@ -43,8 +43,9 @@ public class ClinicController {
 	public String deleteClinic(@PathVariable String id) {
 		return clinicService.delete(id);
 	}
+
 	@PutMapping(path = "/{id}")
-	public Clinic updateClinic(@PathVariable String id,@RequestBody Clinic  clinic) {
+	public Clinic updateClinic(@PathVariable String id, @RequestBody Clinic clinic) {
 		return clinicService.update(clinic);
 	}
 }

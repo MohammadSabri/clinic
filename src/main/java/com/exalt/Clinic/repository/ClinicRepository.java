@@ -11,5 +11,11 @@ import com.exalt.Clinic.model.Clinic;
 @Repository
 public interface ClinicRepository extends MongoRepository<Clinic, String> {
 	@Query("{  \"address.position\": {$nearSphere: {$geometry: {type: \"Point\",coordinates: [?0, ?1]},$maxDistance: ?2}}}")
-	List<Clinic> findGeo(double longitude,double latitude,double distance);
+	List<Clinic> findGeo(double longitude, double latitude, double distance);
+
+	@Query(sort = "{_id:-1}", value = "{}")
+	List<Clinic> getId();
+
+	@Query(sort = "{_id:-1}", value = "{}")
+	String getIddd();
 }
