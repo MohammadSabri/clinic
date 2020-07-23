@@ -31,7 +31,6 @@ public class ClinicServiceImpl implements ClinicService {
 		if (!clinicRepository.existsById(id)) {
 			throw new CommonException(ErrorEnum.WRONG_ID);
 		}
-
 		return clinicRepository.findById(id).get();
 	}
 
@@ -44,9 +43,15 @@ public class ClinicServiceImpl implements ClinicService {
 
 	@Transactional
 	@Override
-	public Clinic update(Clinic clinic) {
-		// TODO Auto-generated method stub
-		return null;
+	public Clinic update(String id, Clinic clinic) {
+		if (!clinicRepository.existsById(id)) {
+			throw new CommonException(ErrorEnum.WRONG_ID);
+		}
+		Clinic clinicTemp = clinicRepository.findById(id).get();
+		clinicTemp.setName(clinic.getName());
+		clinicTemp.setAddress(clinic.getAddress());
+		
+		return clinicRepository.save(clinicTemp);
 	}
 
 	@Transactional

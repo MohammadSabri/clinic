@@ -13,7 +13,7 @@ public interface ClinicService {
 
 	List<Clinic> getAll(int page, int limit);
 
-	Clinic update(Clinic clinic);
+	Clinic update(String id,Clinic clinic);
 
 	String delete(String id);
 

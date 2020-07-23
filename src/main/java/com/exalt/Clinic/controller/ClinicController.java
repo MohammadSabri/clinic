@@ -23,7 +23,7 @@ public class ClinicController {
 	@Autowired
 	ClinicService clinicService;
 
-	@PostMapping(path = {"/",""})
+	@PostMapping(path = { "/", "" })
 	public Clinic creatClinic(@RequestBody Clinic clinic) {
 		return clinicService.create(clinic);
 	}
@@ -46,6 +46,6 @@ public class ClinicController {
 
 	@PutMapping(path = "/{id}")
 	public Clinic updateClinic(@PathVariable String id, @RequestBody Clinic clinic) {
-		return clinicService.update(clinic);
+		return clinicService.update(id,clinic);
 	}
 }

@@ -1,6 +1,8 @@
 package com.exalt.Clinic.model;
 
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class Address {
@@ -16,6 +18,7 @@ public class Address {
 	private String timeZone;
 	@Field(name = "building_number")
 	private int buildingNumber;
+	@GeoSpatialIndexed(name = "address.position", type = GeoSpatialIndexType.GEO_2DSPHERE)
 	private GeoJsonPoint position;
 
 	public String getId() {
@@ -89,7 +92,5 @@ public class Address {
 	public void setPosition(GeoJsonPoint position) {
 		this.position = position;
 	}
-
-	
 
 }
