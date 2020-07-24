@@ -9,6 +9,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -39,8 +40,7 @@ public class ClinicTest {
 	private int port;
 
 	@BeforeEach
-	void setupBefor() throws RestClientException, URISyntaxException {
-
+	public void setupBefor() throws RestClientException, URISyntaxException {
 		Clinic clinic = new Clinic();
 		clinic.setName("testCreatBefor");
 		Address address = new Address();
@@ -56,21 +56,11 @@ public class ClinicTest {
 		address.setPosition(position);
 		clinic.setAddress(address);
 		create(clinic);
-
-	}
-
-//	@AfterEach
-//	void setupAfter() {
-//		clinicRepository.deleteAll();
-//	}
-
-	@Test
-	void test() {
-
 	}
 
 	@Test
-	void creatTest() throws RestClientException, URISyntaxException {
+	@DisplayName(value = "testClinicCreate_AddNewClinic_successfull")
+	public void creatTest() throws RestClientException, URISyntaxException {
 		Clinic clinic = new Clinic();
 		clinic.setName("testCreat");
 		Address address = new Address();
@@ -86,7 +76,6 @@ public class ClinicTest {
 		address.setPosition(position);
 		clinic.setAddress(address);
 		Clinic clinicTemp = create(clinic);
-
 		assertAll(
 
 				() -> assertEquals(clinicTemp.getId(), getLastId()),
@@ -105,11 +94,11 @@ public class ClinicTest {
 		);
 
 		assertTrue(clinicRepository.existsById(clinicTemp.getId()));
-
 	}
 
 	@Test
-	void getTest() throws RestClientException, URISyntaxException {
+	@DisplayName(value = "testGetClinic_getClinicById_successfull")
+	public void getTest() throws RestClientException, URISyntaxException {
 		Clinic clinic = get(getLastId());
 		assertAll(
 
@@ -129,7 +118,8 @@ public class ClinicTest {
 	}
 
 	@Test
-	void updateTest() throws RestClientException, URISyntaxException {
+	@DisplayName(value = "testClinicUpdate_updateClinicById_successfull")
+	public void updateTest() throws RestClientException, URISyntaxException {
 		Clinic clinic = get(getLastId());
 		clinic.setName("updateTestName");
 		Address address = new Address();
@@ -169,13 +159,15 @@ public class ClinicTest {
 	}
 
 	@Test
-	void deleteTest() throws RestClientException, URISyntaxException {
+	@DisplayName(value = "testClinicDelete_DeleteClinic_successfull")
+	public void deleteTest() throws RestClientException, URISyntaxException {
 		String result = delete(getLastId());
 		assertEquals("Deleted successsfuly", result);
 	}
 
 	@Test
-	void getGeoTest() throws RestClientException, URISyntaxException {
+	@DisplayName(value = "testGeoLocation_ClinicGeoLocationTesting_successfull")
+	public void getGeoTest() throws RestClientException, URISyntaxException {
 
 		creatTenClinic();
 		assertAll(
@@ -187,28 +179,72 @@ public class ClinicTest {
 
 	}
 
+	/**
+	 * get clinic by specific id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws RestClientException
+	 * @throws URISyntaxException
+	 */
 	private Clinic get(String id) throws RestClientException, URISyntaxException {
 		return testRestTemplate.getForEntity(new URI("http://localhost:" + port + "/api/v1/clinic/" + id), Clinic.class)
 				.getBody();
 	}
 
+	/**
+	 * create new clinic
+	 * 
+	 * @param clinic
+	 * @return
+	 * @throws RestClientException
+	 * @throws URISyntaxException
+	 */
 	private Clinic create(Clinic clinic) throws RestClientException, URISyntaxException {
 		return testRestTemplate
 				.postForEntity(new URI("http://localhost:" + port + "/api/v1/clinic/"), clinic, Clinic.class).getBody();
 	}
 
+	/**
+	 * delete clinic by given id
+	 * 
+	 * @param id
+	 * @return
+	 * @throws RestClientException
+	 * @throws URISyntaxException
+	 */
 	private String delete(String id) throws RestClientException, URISyntaxException {
 		return testRestTemplate.exchange(
 				new RequestEntity<>(HttpMethod.DELETE, new URI("http://localhost:" + port + "/api/v1/clinic/" + id)),
 				String.class).getBody();
 	}
 
+	/**
+	 * update clinic information
+	 * 
+	 * @param id
+	 * @param clinic
+	 * @return
+	 * @throws RestClientException
+	 * @throws URISyntaxException
+	 */
 	private Clinic update(String id, Clinic clinic) throws RestClientException, URISyntaxException {
 		return testRestTemplate.exchange(new RequestEntity<>(clinic, HttpMethod.PUT,
 				new URI("http://localhost:" + port + "/api/v1/clinic/" + id)), Clinic.class).getBody();
 
 	}
 
+	/**
+	 * Get list of all clinic by give location by longitude and latitude and the
+	 * distance to search within
+	 * 
+	 * @param longitude
+	 * @param latitude
+	 * @param distance
+	 * @return
+	 * @throws RestClientException
+	 * @throws URISyntaxException
+	 */
 	private List<Clinic> getGeo(double longitude, double latitude, double distance)
 			throws RestClientException, URISyntaxException {
 		return testRestTemplate.exchange(
@@ -218,6 +254,13 @@ public class ClinicTest {
 				}).getBody();
 	}
 
+	/**
+	 * create 10 clinic with there location to use them in nearBy location testing
+	 * as each clinic has 0.1 degree between each other which represent 11Km
+	 * 
+	 * @throws RestClientException
+	 * @throws URISyntaxException
+	 */
 	private void creatTenClinic() throws RestClientException, URISyntaxException {
 		Clinic clinic = new Clinic();
 		Address address = new Address();
