@@ -1,5 +1,8 @@
 package com.exalt.Clinic.model;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
@@ -9,13 +12,19 @@ public class Address {
 	private String id;
 	private String country;
 	@Field(name = "postal_code")
+	@Min(value = 0, message = "Postal code must be positive integer")
 	private int postalCode;
 	@Field(name = "zip_code")
+	@Min(value = 501, message = "Zip code must be positive integer")
 	private int zipCode;
+	@NotNull(message = "City name must not be null")
 	private String city;
+	@NotNull(message = "street name must not be null")
 	private String street;
 	@Field(name = "time_zone")
+	@NotNull(message = "time zone must not be null")
 	private String timeZone;
+	@Min(value = 0, message = "Building number >0")
 	@Field(name = "building_number")
 	private int buildingNumber;
 	@GeoSpatialIndexed(name = "address.position", type = GeoSpatialIndexType.GEO_2DSPHERE)

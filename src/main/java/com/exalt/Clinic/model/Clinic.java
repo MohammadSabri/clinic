@@ -1,5 +1,7 @@
 package com.exalt.Clinic.model;
 
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -7,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Clinic {
 	@Id
 	private String id;
+	@NotNull(message = "Clinic must not be null")
 	private String name;
 	private Address address;
 

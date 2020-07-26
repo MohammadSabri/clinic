@@ -3,7 +3,6 @@ package com.exalt.Clinic.exception;
 import java.util.ArrayList;
 import java.util.Date;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -29,9 +28,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(apiError, new HttpHeaders(), ex.getError().getStatus());
 	}
 
-
 	@Override
-
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		ArrayList<String> errorList = new ArrayList<>();

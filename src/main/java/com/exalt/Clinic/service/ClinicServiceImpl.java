@@ -19,13 +19,18 @@ public class ClinicServiceImpl implements ClinicService {
 
 	@Transactional
 	@Override
+	/**
+	 * create new Clinic using Clinic repository
+	 */
 	public Clinic create(Clinic clinic) {
-
 		return clinicRepository.save(clinic);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
+	/**
+	 * get Clinic by the id using Clinic repository
+	 */
 	public Clinic get(String id) {
 
 		if (!clinicRepository.existsById(id)) {
@@ -34,15 +39,11 @@ public class ClinicServiceImpl implements ClinicService {
 		return clinicRepository.findById(id).get();
 	}
 
-	@Transactional(readOnly = true)
-	@Override
-	public List<Clinic> getAll(int page, int limit) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Transactional
 	@Override
+	/**
+	 * update Clinic by the id using Clinic repository
+	 */
 	public Clinic update(String id, Clinic clinic) {
 		if (!clinicRepository.existsById(id)) {
 			throw new CommonException(ErrorEnum.WRONG_ID);
@@ -50,12 +51,14 @@ public class ClinicServiceImpl implements ClinicService {
 		Clinic clinicTemp = clinicRepository.findById(id).get();
 		clinicTemp.setName(clinic.getName());
 		clinicTemp.setAddress(clinic.getAddress());
-		
 		return clinicRepository.save(clinicTemp);
 	}
 
 	@Transactional
 	@Override
+	/**
+	 * delete Clinic from DB using Clinic repository
+	 */
 	public String delete(String id) {
 		if (!clinicRepository.existsById(id)) {
 			throw new CommonException(ErrorEnum.WRONG_ID);
@@ -64,11 +67,8 @@ public class ClinicServiceImpl implements ClinicService {
 			clinicRepository.deleteById(id);
 		}
 		if (clinicRepository.existsById(id)) {
-
 			throw new CommonException(ErrorEnum.NOT_DELETED);
-
 		}
-
 		return "Deleted successsfuly";
 	}
 

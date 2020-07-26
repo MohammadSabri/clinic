@@ -22,8 +22,11 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 
+import com.exalt.Clinic.exception.CommonException;
+import com.exalt.Clinic.exception.ErrorEnum;
 import com.exalt.Clinic.model.Address;
 import com.exalt.Clinic.model.Clinic;
 import com.exalt.Clinic.repository.ClinicRepository;
@@ -178,7 +181,17 @@ public class ClinicTest {
 		);
 
 	}
+	@Transactional
+	@Test
+	public void transactionTest() throws RestClientException, URISyntaxException {
+		List<Clinic > clinics = getGeo(10, 10, 10000000);
+		//System.out.println(clinics.get(0).getId());
+//		if(true)
+//		throw new CommonException(ErrorEnum.WRONG_ID);
+//		creatTenClinic();
 
+		
+	}
 	/**
 	 * get clinic by specific id
 	 * 

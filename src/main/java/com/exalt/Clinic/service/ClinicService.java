@@ -8,12 +8,10 @@ public interface ClinicService {
 	Clinic create(Clinic clinic);
 
 	Clinic get(String id);
-	
-	List<Clinic>gettNear(double longitude,double latitude,double distance);
 
-	List<Clinic> getAll(int page, int limit);
+	List<Clinic> gettNear(double longitude, double latitude, double distance);
 
-	Clinic update(String id,Clinic clinic);
+	Clinic update(String id, Clinic clinic);
 
 	String delete(String id);
 
