@@ -14,5 +14,9 @@ public interface ClinicService {
 	Clinic update(String id, Clinic clinic);
 
 	String delete(String id);
+	
+	boolean existClinic (String id);
+	
+	String lastId();
 
 }

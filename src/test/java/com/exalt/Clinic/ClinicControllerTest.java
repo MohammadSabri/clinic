@@ -8,6 +8,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,17 +19,15 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 
-import com.exalt.Clinic.exception.CommonException;
-import com.exalt.Clinic.exception.ErrorEnum;
 import com.exalt.Clinic.model.Address;
 import com.exalt.Clinic.model.Clinic;
 import com.exalt.Clinic.repository.ClinicRepository;
@@ -34,13 +35,21 @@ import com.exalt.Clinic.repository.ClinicRepository;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
 @ActiveProfiles("dev")
-public class ClinicTest {
+public class ClinicControllerTest {
 	@Autowired
+	RestTemplateBuilder restTemplateBuilder;
 	private TestRestTemplate testRestTemplate;
 	@Autowired
 	private ClinicRepository clinicRepository;
 	@LocalServerPort
 	private int port;
+
+	@PostConstruct
+	public void initialize() {
+		RestTemplateBuilder builder = restTemplateBuilder.rootUri("http://localhost:" + port + "/api/v1/clinic");
+		this.testRestTemplate = new TestRestTemplate(builder);
+
+	}
 
 	@BeforeEach
 	public void setupBefor() throws RestClientException, URISyntaxException {
@@ -59,6 +68,11 @@ public class ClinicTest {
 		address.setPosition(position);
 		clinic.setAddress(address);
 		create(clinic);
+	}
+
+	@AfterEach
+	void setupAfter() {
+		clinicRepository.deleteAll();
 	}
 
 	@Test
@@ -181,17 +195,7 @@ public class ClinicTest {
 		);
 
 	}
-	@Transactional
-	@Test
-	public void transactionTest() throws RestClientException, URISyntaxException {
-		List<Clinic > clinics = getGeo(10, 10, 10000000);
-		//System.out.println(clinics.get(0).getId());
-//		if(true)
-//		throw new CommonException(ErrorEnum.WRONG_ID);
-//		creatTenClinic();
 
-		
-	}
 	/**
 	 * get clinic by specific id
 	 * 
@@ -201,8 +205,8 @@ public class ClinicTest {
 	 * @throws URISyntaxException
 	 */
 	private Clinic get(String id) throws RestClientException, URISyntaxException {
-		return testRestTemplate.getForEntity(new URI("http://localhost:" + port + "/api/v1/clinic/" + id), Clinic.class)
-				.getBody();
+
+		return testRestTemplate.getForEntity("/" + id, Clinic.class).getBody();
 	}
 
 	/**
@@ -214,8 +218,7 @@ public class ClinicTest {
 	 * @throws URISyntaxException
 	 */
 	private Clinic create(Clinic clinic) throws RestClientException, URISyntaxException {
-		return testRestTemplate
-				.postForEntity(new URI("http://localhost:" + port + "/api/v1/clinic/"), clinic, Clinic.class).getBody();
+		return testRestTemplate.postForEntity("/", clinic, Clinic.class).getBody();
 	}
 
 	/**
@@ -227,9 +230,8 @@ public class ClinicTest {
 	 * @throws URISyntaxException
 	 */
 	private String delete(String id) throws RestClientException, URISyntaxException {
-		return testRestTemplate.exchange(
-				new RequestEntity<>(HttpMethod.DELETE, new URI("http://localhost:" + port + "/api/v1/clinic/" + id)),
-				String.class).getBody();
+		return testRestTemplate.exchange(new RequestEntity<>(HttpMethod.DELETE, new URI("/" + id)), String.class)
+				.getBody();
 	}
 
 	/**
@@ -242,8 +244,8 @@ public class ClinicTest {
 	 * @throws URISyntaxException
 	 */
 	private Clinic update(String id, Clinic clinic) throws RestClientException, URISyntaxException {
-		return testRestTemplate.exchange(new RequestEntity<>(clinic, HttpMethod.PUT,
-				new URI("http://localhost:" + port + "/api/v1/clinic/" + id)), Clinic.class).getBody();
+		return testRestTemplate.exchange(new RequestEntity<>(clinic, HttpMethod.PUT, new URI("/" + id)), Clinic.class)
+				.getBody();
 
 	}
 
@@ -260,11 +262,11 @@ public class ClinicTest {
 	 */
 	private List<Clinic> getGeo(double longitude, double latitude, double distance)
 			throws RestClientException, URISyntaxException {
-		return testRestTemplate.exchange(
-				new URI("http://localhost:" + port + "/api/v1/clinic/geo?longitude=" + longitude + "&latitude="
-						+ latitude + "&distance=" + distance),
-				HttpMethod.GET, null, new ParameterizedTypeReference<List<Clinic>>() {
-				}).getBody();
+		return testRestTemplate
+				.exchange("/geo?longitude=" + longitude + "&latitude=" + latitude + "&distance=" + distance,
+						HttpMethod.GET, null, new ParameterizedTypeReference<List<Clinic>>() {
+						})
+				.getBody();
 	}
 
 	/**
@@ -308,4 +310,5 @@ public class ClinicTest {
 	private String getLastId() {
 		return clinicRepository.getLastId().get(0).substring(18, 42);
 	}
+
 }

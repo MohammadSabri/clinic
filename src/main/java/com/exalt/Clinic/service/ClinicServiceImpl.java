@@ -32,7 +32,6 @@ public class ClinicServiceImpl implements ClinicService {
 	 * get Clinic by the id using Clinic repository
 	 */
 	public Clinic get(String id) {
-
 		if (!clinicRepository.existsById(id)) {
 			throw new CommonException(ErrorEnum.WRONG_ID);
 		}
@@ -77,6 +76,17 @@ public class ClinicServiceImpl implements ClinicService {
 	public List<Clinic> gettNear(double longitude, double latitude, double distance) {
 
 		return clinicRepository.findGeo(longitude, latitude, distance);
+	}
+
+	@Override
+	public boolean existClinic(String id) {
+
+		return clinicRepository.existsById(id);
+	}
+
+	@Override
+	public String lastId() {
+		return clinicRepository.getLastId().get(0).substring(18, 42);
 	}
 
 }
