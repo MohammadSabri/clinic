@@ -84,4 +84,5 @@ public class ClinicController {
 	public Clinic updateClinic(@PathVariable String id, @RequestBody @Valid Clinic clinic) {
 		return clinicService.update(id, clinic);
 	}
+
 }
